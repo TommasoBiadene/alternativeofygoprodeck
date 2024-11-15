@@ -5,8 +5,40 @@ import 'package:flutter/material.dart';
 
 class CardDetailPage extends StatelessWidget {
   final dynamic card;
+  final dynamic expancion;
 
-  CardDetailPage({required this.card});
+  CardDetailPage({required this.card, required this.expancion});
+
+  card_list(var cardsets) {
+    var vector = [];
+    bool flag = false;
+    if (expancion != null) {
+      if (!expancion.isEmpty && !cardsets.isEmpty) {
+        //print(cardsets);
+
+        for (var sets in cardsets) {
+          for (var setes in expancion) {
+            if (sets['set_code'].split('-')[0].toLowerCase() == setes['code']) {
+              vector.add(setes['id']);
+              flag = true;
+            }
+          }
+
+          if (flag == false) {
+            vector.add(0);
+          }
+
+          flag = false;
+        }
+      } else {
+        print("no expancion");
+        return null;
+      }
+    } else {
+      return null;
+    }
+    return vector;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +62,8 @@ class CardDetailPage extends StatelessWidget {
             : '';
     var cardSets = card['card_sets'] ?? [];
 
+    // print(expancion);
+    print(card_list(cardSets));
     return Scaffold(
       appBar: AppBar(
         title: Text(cardName),
@@ -107,16 +141,14 @@ class CardDetailPage extends StatelessWidget {
             SizedBox(height: 10),
 
             ...cardSets.map<Widget>((edition) {
-              //var setName = edition['set_name'] ?? 'Nome non disponibile';
               var setCode = edition['set_code'] ?? 'Codice non disponibile';
               var setRarity = edition['set_rarity'] ?? 'Rarità non disponibile';
-              //setCode = setCode.split('-')[0];
+              setCode = setCode.split('-')[0];
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildCardInfoRow(setCode, setRarity),
-                  //_buildCardInfoRow('Rarità', setRarity),
                   SizedBox(height: 10), // Spazio tra le edizioni
                 ],
               );
